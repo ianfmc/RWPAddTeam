@@ -7,8 +7,6 @@ var sinon = require('sinon');
 var expect = chai.expect;
 var assert = chai.assert;
 
-
-
 describe('Add a New Team', function() { 
 
 	var database;
