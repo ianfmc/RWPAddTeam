@@ -4,7 +4,7 @@
   "description": "Lamdba Function to add RWP Tema to DynamoDB",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./spec/spec.js"
+    "test": "./node_modules/.bin/mocha ./spec/*.spec.js"
   },
   "repository": {
     "type": "git",
@@ -12,7 +12,8 @@
   },
   "keywords": [
     "RWP",
-    "DynamoDB"
+    "DynamoDB",
+    "Add"
   ],
   "author": "Ian F. McCallum",
   "license": "ISC",
@@ -22,7 +23,8 @@
   "homepage": "https://github.com/ianfmc/RWPAddTeam#readme",
   "devDependencies": {
     "aws-sdk": "^2.6.11",
-    "expect.js": "^0.3.1",
-    "mocha": "^3.1.2"
+    "chai": "^3.5.0",
+    "mocha": "^3.1.2",
+    "sinon": "^1.17.6"
   }
 }

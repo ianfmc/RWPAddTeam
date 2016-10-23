@@ -4,18 +4,25 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 exports.handler = function(event, context, callback) {
     
     var uuid = new Date().getTime();
-    console.log("UUID: " + uuid);
     
-    var params = {
+    if ((event.Season == null) | (event.Players == null)) {
+        context.fail(new Error('No Players on Team'));
+    }
+    else if (event.Players.length < 1) {
+        context.fail(new Error('No Players on Team'));
+    }
+    else {
+        var params = {
 
-        TableName : 'Team',
-        Item : { 
-          "TeamID" : uuid ,
-          "Name" : event.Name ,
-          "Season" : event.Season,
-          "Players" : event.Players
-        },
-    };
+            TableName : 'Team',
+            Item : { 
+                "TeamID" : new Date().getTime() ,
+                "Name" : event.Name ,
+                "Season" : event.Season,
+                "Players" : event.Players
+            },
+        };
 
-    docClient.put(params, context.done);
+        docClient.put(params, function(response, result) {context.succeed('Team : ' + uuid.toString())});
+    }
 };
