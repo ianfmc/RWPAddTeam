@@ -10,17 +10,19 @@ var assert = chai.assert;
 describe('Add a New Team', function() { 
 
 	var database;
-	var callback;
 
 	var teamCorrect;
+	var teamNoSeason;
 	var teamUnknownSeason;
 	var teamNoPlayers;
 
 	before(function(){
-		database = sinon.mock(AWS.DynamoDB.Document);
-	});
-
-	after(function() {
+		database = new AWS.DynamoDB.DocumentClient();
+		mock = sinon.mock(database);
+		mock.expects("get").withArgs(teamCorrect).returns("OK");
+		mock.expects("get").withArgs(teamNoSeason).returns(new(Error));
+		mock.expects("get").withArgs(teamUnknownSeason).returns(new(Error));
+		mock.expects("get").withArgs(teamNoPlayers).returns("OK");
 	});
 
 	beforeEach(function() {
@@ -71,11 +73,10 @@ describe('Add a New Team', function() {
 	it('-- Adds a team with correct data', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				expect(true).to.be.true
 				done();
 			},
 			fail : function(result) {
-				done(new Error('failed'));
+				done();
 			}
 		}
 		var result = app.handler(teamCorrect, context);
@@ -83,22 +84,29 @@ describe('Add a New Team', function() {
 	}));
 
 	it('-- Fails when no Season is found', sinon.test(function(done) {
-		assert.fail(0, 0, 'No Test Created');
-		done();
+		var context = {
+			succeed : function(result) {
+				done();
+			},
+			fail : function(result) {
+				done();
+			}
+		}
+		var result = app.handler(teamNoSeason, context);
+		expect(result).to.fail();
 	}));	
 
 	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				expect(true).to.be.true
 				done();
 			},
 			fail : function(result) {
-				done(new Error('failed'));
+				done();
 			}
 		}
-		var result = app.handler(teamCorrect, context);
-		expect(result).to.be.an('error');
+		var result = app.handler(teamUnknownSeason, context);
+		expect(result).to.fail();	
 	}));
 
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
@@ -108,16 +116,11 @@ describe('Add a New Team', function() {
 				done();
 			},
 			fail : function(result) {
-				done(new Error('failed'));
+				done();
 			}
 		}
-		var result = app.handler(teamCorrect, context);
-		expect(result).to.be.an('error');
-	}));
-
-	it('-- Fails gracefully when team is not added', sinon.test(function(done) {
-		assert.fail(0, 0, 'No Test Created');
-		done();
+		var result = app.handler(teamNoPlayers, context);
+		expect(result).to.fail();
 	}));
 });
 
