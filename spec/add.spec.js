@@ -86,7 +86,7 @@ describe('Add a New Team', function() {
 	it('-- Fails when no Season is found', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				done();
+				done(result);
 			},
 			fail : function(result) {
 				done();
