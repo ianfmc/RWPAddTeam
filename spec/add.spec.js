@@ -70,17 +70,17 @@ describe('Add a New Team', function() {
 	afterEach(function() {
 	    });
 
-	it('-- Adds a team with correct data', sinon.test(function(done) {
+	it('-- Adds a Team with correct data', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
+				expect(result).to.have.string("Team");
 				done();
 			},
 			fail : function(result) {
-				done();
+				done(new Error("Failed but should not have"));
 			}
-		}
+		};
 		var result = app.handler(teamCorrect, context);
-		expect(result).to.have.string("Team");
 	}));
 
 	it('-- Fails when no Season is found', sinon.test(function(done) {
@@ -89,9 +89,9 @@ describe('Add a New Team', function() {
 				done(result);
 			},
 			fail : function(result) {
-				done();
+				done(new Error());
 			}
-		}
+		};
 		var result = app.handler(teamNoSeason, context);
 		expect(result).to.fail();
 	}));	
@@ -104,7 +104,7 @@ describe('Add a New Team', function() {
 			fail : function(result) {
 				done();
 			}
-		}
+		};
 		var result = app.handler(teamUnknownSeason, context);
 		expect(result).to.fail();	
 	}));
@@ -118,7 +118,7 @@ describe('Add a New Team', function() {
 			fail : function(result) {
 				done();
 			}
-		}
+		};
 		var result = app.handler(teamNoPlayers, context);
 		expect(result).to.fail();
 	}));

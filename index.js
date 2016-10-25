@@ -4,11 +4,14 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 exports.handler = function(event, context, callback) {
     
     var uuid = new Date().getTime();
+    console.log(event);
     
     if (event.Season == null) {
+      console.log("No Season");
       context.fail(new Error('No Season'));
     }
     else if (event.Players == null) {
+      console.log("No Players");
       context.fail(new Error('No Players'));
     }
     else if (event.Players.length < 1) {
@@ -21,14 +24,17 @@ exports.handler = function(event, context, callback) {
       }
       docClient.get(seasonParams, function(err, data) {
         if (err) {
+          console.log("Season Not Found");
           context.fail('Season Not Found');
         }
         else {
+          console.log("Success");
           var params = {
 
               TableName : 'Team',
               Item : { 
-                  "TeamID" : new Date().getTime() ,
+                  "TeamID" : new Date().getTime(),
+                  "Status" : "Active",
                   "Name" : event.Name ,
                   "Season" : event.Season,
                   "Players" : event.Players

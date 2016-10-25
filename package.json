@@ -1,7 +1,7 @@
 {
   "name": "rwpaddteam",
   "version": "1.0.0",
-  "description": "Lamdba Function to add RWP Tema to DynamoDB",
+  "description": "Lamdba Function to add RWP Team to DynamoDB",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/mocha ./spec/*.spec.js"
@@ -13,7 +13,8 @@
   "keywords": [
     "RWP",
     "DynamoDB",
-    "Add"
+    "Add",
+    "Team"
   ],
   "author": "Ian F. McCallum",
   "license": "ISC",
