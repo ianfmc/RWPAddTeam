@@ -5,6 +5,7 @@ var chai = require('chai');
 var sinon = require('sinon');
 
 var expect = chai.expect;
+var should = chai.should;
 var assert = chai.assert;
 
 describe('Add a New Team', function() { 
@@ -77,50 +78,47 @@ describe('Add a New Team', function() {
 				done(result);
 			},
 			fail : function(result) {
-				done(new Error("Failed but should not have"));
+				done(new Error('Failed but should not have'));
 			}
 		};
 		var result = app.handler(teamCorrect, context);
+		expect(result).to.have.string('OK');
 	}));
 
 	it('-- Fails when no Season is found', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				done(result);
+				done();
 			},
 			fail : function(result) {
-				done(new Error());
+				done(new Error('No Season'));
 			}
 		};
-		var result = app.handler(teamNoSeason, context);
-		expect(result).to.fail();
+		should.throws(app.handler(teamNoSeason, context));
 	}));	
 
 	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				done();
+				done(result);
 			},
 			fail : function(result) {
-				done();
+				done(new Error('Season Not Found'));
 			}
 		};
-		var result = app.handler(teamUnknownSeason, context);
-		expect(result).to.fail();	
+		should.throws(app.handler(teamUnknownSeason, context));	
 	}));
 
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
 		var context = {
 			succeed : function(result) {
-				expect(true).to.be.true
 				done();
 			},
 			fail : function(result) {
-				done();
+				done(new Error('No Players'));
 			}
 		};
-		var result = app.handler(teamNoPlayers, context);
-		expect(result).to.fail();
+		should.throws(app.handler(teamUnknownSeason, context));	
 	}));
 });
 

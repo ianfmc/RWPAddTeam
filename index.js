@@ -4,12 +4,11 @@ var docClient = new AWS.DynamoDB.DocumentClient();
 exports.handler = function(event, context, callback) {
     
     var uuid = new Date().getTime();
-    console.log(event);
     
-    if (event.Season === '') {
+    if (event.Season == null) {
       context.fail(new Error('No Season'));
     }
-    else if (event.Players === '') {
+    else if (event.Players == null) {
       context.fail('No Players');
     }
     else if (event.Players.length < 1) {
