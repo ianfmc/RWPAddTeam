@@ -19,7 +19,6 @@ exports.handler = function(event, context, callback) {
         TableName : 'Season',
         Key : event.Season
       }
-      console.log(seasonParams);
       docClient.get(seasonParams, function(err, data) {
         if (err) {
           console.log("Season Not Found");

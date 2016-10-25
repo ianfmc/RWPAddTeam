@@ -94,7 +94,7 @@ describe('Add a New Team', function() {
 				done(new Error('No Season'));
 			}
 		};
-		should.throws(app.handler(teamNoSeason, context));
+		expect(app.handler(teamNoSeason, context)).to.throws(Error);
 	}));	
 
 	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
@@ -106,7 +106,7 @@ describe('Add a New Team', function() {
 				done(new Error('Season Not Found'));
 			}
 		};
-		should.throws(app.handler(teamUnknownSeason, context));	
+		expect(app.handler(teamUnknownSeason, context)).to.throws(Error);	
 	}));
 
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
@@ -118,7 +118,7 @@ describe('Add a New Team', function() {
 				done(new Error('No Players'));
 			}
 		};
-		should.throws(app.handler(teamUnknownSeason, context));	
+		expect(app.handler(teamNoPlayers, context)).to.throws(Error);	
 	}));
 });
 
