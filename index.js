@@ -6,22 +6,21 @@ exports.handler = function(event, context, callback) {
     var uuid = new Date().getTime();
     console.log(event);
     
-    if (event.Season == null) {
-      console.log("No Season");
+    if (event.Season === '') {
       context.fail(new Error('No Season'));
     }
-    else if (event.Players == null) {
-      console.log("No Players");
-      context.fail(new Error('No Players'));
+    else if (event.Players === '') {
+      context.fail('No Players');
     }
     else if (event.Players.length < 1) {
-      context.fail(new Error('No Players'));
+      context.fail('No Players');
     }
     else {
       var seasonParams = {
         TableName : 'Season',
         Key : event.Season
       }
+      console.log(seasonParams);
       docClient.get(seasonParams, function(err, data) {
         if (err) {
           console.log("Season Not Found");

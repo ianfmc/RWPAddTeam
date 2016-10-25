@@ -19,10 +19,11 @@ describe('Add a New Team', function() {
 	before(function(){
 		database = new AWS.DynamoDB.DocumentClient();
 		mock = sinon.mock(database);
-		mock.expects("get").withArgs(teamCorrect).returns("OK");
-		mock.expects("get").withArgs(teamNoSeason).returns(new(Error));
-		mock.expects("get").withArgs(teamUnknownSeason).returns(new(Error));
-		mock.expects("get").withArgs(teamNoPlayers).returns("OK");
+		mock.expects("get").withArgs(
+			{'TableName' : 'Season', 'Key' : '2016 CIF'}).returns('OK');
+		mock.expects("get").withArgs(null).returns(new(Error));
+		mock.expects("get").withArgs(
+			{'TableName' : 'Season', 'Key' : '2016 CIF'}).returns(new(Error));	
 	});
 
 	beforeEach(function() {
@@ -73,8 +74,7 @@ describe('Add a New Team', function() {
 	it('-- Adds a Team with correct data', sinon.test(function(done) {
 		var context = {
 			succeed : function(result) {
-				expect(result).to.have.string("Team");
-				done();
+				done(result);
 			},
 			fail : function(result) {
 				done(new Error("Failed but should not have"));
