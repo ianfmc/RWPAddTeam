@@ -1,16 +1,17 @@
+var AWSMock = require('aws-sdk-mock');
 var AWS = require('aws-sdk');
 
 var app = require('../index.js');
 var chai = require('chai');
 var sinon = require('sinon');
 
-var expect = chai.expect;
-var should = chai.should;
-var assert = chai.assert;
+var expect = require('chai').expect;
+var should = require('chai').should;
+var assert = require('chai').assert;
 
 describe('Add a New Team', function() { 
 
-	var database;
+	var callback;
 
 	var teamCorrect;
 	var teamNoSeason;
@@ -18,19 +19,16 @@ describe('Add a New Team', function() {
 	var teamNoPlayers;
 
 	before(function(){
-		database = new AWS.DynamoDB.DocumentClient();
-		mock = sinon.mock(database);
-		mock.expects("get").withArgs(
-			{'TableName' : 'Season', 'Key' : '2016 CIF'}).returns('OK');
-		mock.expects("get").withArgs(null).returns(new(Error));
-		mock.expects("get").withArgs(
-			{'TableName' : 'Season', 'Key' : '2016 CIF'}).returns(new(Error));	
+		AWSMock.mock('DynamoDB.DocumentClient', 'get', function(params, callback) {
+			callback(params);
+		})
 	});
 
 	beforeEach(function() {
+		context = {};
 		teamCorrect = {
 		    "Name" : "Blue Bombers",
-		    "Season" : "2016 CIF",
+		    "SeasonID" : 1477261819718,
 		    "Players" : [
 					{
 						"First Name" : "Lamar",
@@ -53,7 +51,7 @@ describe('Add a New Team', function() {
 			};
 		teamUnknownSeason = {
 		    "Name" : "Blue Bombers",
-		    "Season" : "2016 Spring",
+		    "SeasonID" : 1477261819720,
 		    "Players" : [
 					{
 						"First Name" : "Lamar",
@@ -65,60 +63,49 @@ describe('Add a New Team', function() {
 			};
 		teamNoPlayers = {
 		    "Name" : "Blue Bombers",
-		    "Season" : "2016 Spring"
+		    "SeasonID" : 1477261819718,
 		};
 	});
 
 	afterEach(function() {
+		callback.restore();
 	    });
 
 	it('-- Adds a Team with correct data', sinon.test(function(done) {
-		var context = {
-			succeed : function(result) {
-				done(result);
-			},
-			fail : function(result) {
-				done(new Error('Failed but should not have'));
-			}
-		};
-		var result = app.handler(teamCorrect, context);
-		expect(result).to.have.string('OK');
+		callback = sinon.spy();
+
+		app.handler(teamNoPlayers, context, callback);
+		assert(callback.withArgs('Success'));
+
+		done();
 	}));
 
 	it('-- Fails when no Season is found', sinon.test(function(done) {
-		var context = {
-			succeed : function(result) {
-				done();
-			},
-			fail : function(result) {
-				done(new Error('No Season'));
-			}
-		};
-		expect(app.handler(teamNoSeason, context)).to.throws(Error);
+		callback = sinon.spy();
+
+		app.handler(teamNoSeason, context, callback);
+		assert(callback.withArgs(Error));
+
+		done();
 	}));	
 
-	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
-		var context = {
-			succeed : function(result) {
-				done(result);
-			},
-			fail : function(result) {
-				done(new Error('Season Not Found'));
-			}
-		};
-		expect(app.handler(teamUnknownSeason, context)).to.throws(Error);	
-	}));
 
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
-		var context = {
-			succeed : function(result) {
-				done();
-			},
-			fail : function(result) {
-				done(new Error('No Players'));
-			}
-		};
-		expect(app.handler(teamNoPlayers, context)).to.throws(Error);	
+		callback = sinon.spy();
+
+		app.handler(teamNoPlayers, context, callback);
+		assert(callback.withArgs(Error));
+
+		done();		
+	}));
+
+	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
+		callback = sinon.spy();
+
+		app.handler(teamUnknownSeason, context, callback);
+		assert(callback.withArgs(Error));
+
+		done();	
 	}));
 });
 

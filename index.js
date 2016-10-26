@@ -1,45 +1,46 @@
 var AWS = require('aws-sdk');
-var docClient = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = function(event, context, callback) {
     
+    var docClient = new AWS.DynamoDB.DocumentClient({region: 'us-east-1'});
     var uuid = new Date().getTime();
     
-    if (event.Season == null) {
-      context.fail(new Error('No Season'));
+    if (event.SeasonID == null) {
+      var error = new Error('No Season');
+      callback(error);
     }
     else if (event.Players == null) {
-      context.fail('No Players');
+      var error = new Error('No Players');
+      callback(error);
     }
     else if (event.Players.length < 1) {
-      context.fail('No Players');
+      var error = new Error('No Players');
+      callback(error);
     }
     else {
       var seasonParams = {
         TableName : 'Season',
-        Key : event.Season
+        Key : { SeasonID: event.SeasonID }
       }
       docClient.get(seasonParams, function(err, data) {
         if (err) {
-          console.log("Season Not Found");
-          context.fail('Season Not Found');
+          callback(err);
         }
         else {
-          console.log("Success");
           var params = {
 
               TableName : 'Team',
               Item : { 
-                  "TeamID" : new Date().getTime(),
+                  "TeamID" : uuid,
                   "Status" : "Active",
                   "Name" : event.Name ,
-                  "Season" : event.Season,
+                  "SeasonID" : event.SeasonID,
                   "Players" : event.Players
               },
           };
 
           docClient.put(params, function(response, result) {
-            context.succeed('Team : ' + uuid.toString())
+            callback('Success');
           });
         }
       });
