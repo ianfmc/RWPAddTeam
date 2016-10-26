@@ -68,7 +68,6 @@ describe('Add a New Team', function() {
 	});
 
 	afterEach(function() {
-		callback.restore();
 	    });
 
 	it('-- Adds a Team with correct data', sinon.test(function(done) {
