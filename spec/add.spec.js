@@ -20,12 +20,20 @@ describe('Add a New Team', function() {
 
 	before(function(){
 		AWSMock.mock('DynamoDB.DocumentClient', 'get', function(params, callback) {
-			callback(params);
+				if (params.Key.SeasonID == 1477261819718) {
+					callback(null, 'Success')
+				}
+				else {
+					callback(new Error('Unknown Season'));
+				}
+		});
+		AWSMock.mock('DynamoDB.DocumentClient', 'put', function(params, callback) {
+				callback();
 		})
 	});
 
 	beforeEach(function() {
-		context = {};
+		context = { };
 		teamCorrect = {
 		    "Name" : "Blue Bombers",
 		    "SeasonID" : 1477261819718,
@@ -68,43 +76,40 @@ describe('Add a New Team', function() {
 	});
 
 	afterEach(function() {
-	    });
+	});
 
 	it('-- Adds a Team with correct data', sinon.test(function(done) {
-		callback = sinon.spy();
 
-		app.handler(teamNoPlayers, context, callback);
-		assert(callback.withArgs('Success'));
+		app.handler(teamCorrect, context, function (err, data) {
+			expect(err).equal(null);
+			expect(data).to.contain('Team');
 
-		done();
+			done();
+		});
 	}));
 
 	it('-- Fails when no Season is found', sinon.test(function(done) {
-		callback = sinon.spy();
 
-		app.handler(teamNoSeason, context, callback);
-		assert(callback.withArgs(Error));
-
-		done();
+		app.handler(teamNoSeason, context, function (err, data) {
+			expect(err.message).equal('No Season');		;
+			done();
+		});
 	}));	
 
-
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
-		callback = sinon.spy();
 
-		app.handler(teamNoPlayers, context, callback);
-		assert(callback.withArgs(Error));
-
-		done();		
+		app.handler(teamNoPlayers, context, function (err, data) {
+			expect(err.message).equal('No Players');		;
+			done();
+		});		
 	}));
 
 	it('-- Fails when the Season is not an existing Season', sinon.test(function(done) {
-		callback = sinon.spy();
-
-		app.handler(teamUnknownSeason, context, callback);
-		assert(callback.withArgs(Error));
-
-		done();	
+		
+		app.handler(teamUnknownSeason, context, function (err, data) {
+			expect(err.message).equal('Unknown Season');
+			done();
+		});	
 	}));
 });
 

@@ -6,16 +6,13 @@ exports.handler = function(event, context, callback) {
     var uuid = new Date().getTime();
     
     if (event.SeasonID == null) {
-      var error = new Error('No Season');
-      callback(error);
+      callback(new Error('No Season'));
     }
     else if (event.Players == null) {
-      var error = new Error('No Players');
-      callback(error);
+      callback(new Error('No Players'));
     }
     else if (event.Players.length < 1) {
-      var error = new Error('No Players');
-      callback(error);
+      callback(new Error('No Players'));
     }
     else {
       var seasonParams = {
@@ -24,7 +21,7 @@ exports.handler = function(event, context, callback) {
       }
       docClient.get(seasonParams, function(err, data) {
         if (err) {
-          callback(err);
+          callback(new Error('Unknown Season'));
         }
         else {
           var params = {
@@ -40,7 +37,13 @@ exports.handler = function(event, context, callback) {
           };
 
           docClient.put(params, function(response, result) {
-            callback('Success');
+            if (err) {
+              callback(new Error('DynamoDB Error'));
+            }
+            else {
+              console.log('10');  
+              callback(null, 'Team: ' + uuid);
+            }
           });
         }
       });
