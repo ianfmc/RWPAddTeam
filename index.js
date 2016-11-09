@@ -11,41 +11,39 @@ exports.handler = function(event, context, callback) {
     else if (event.Players == null) {
       callback(new Error('No Players'));
     }
-    else if (event.Players.length < 1) {
-      callback(new Error('No Players'));
-    }
     else {
-      var seasonParams = {
-        TableName : 'Season',
-        Key : { SeasonID: event.SeasonID }
+      if (event.Players.length < 1) {
+        callback(new Error('No Players'));
       }
-      docClient.get(seasonParams, function(err, data) {
-        if (err) {
-          callback(new Error('Unknown Season'));
+      else {
+        var seasonParams = {
+          TableName : 'Season',
+          Key : { SeasonID: event.SeasonID }
         }
-        else {
-          var params = {
+        docClient.get(seasonParams, function(err, data) {
+          if (err) {
+            callback(new Error('Unknown Season'));
+          }
+          else {
+            var params = {
 
-              TableName : 'Team',
-              Item : { 
-                  "TeamID" : uuid,
-                  "Status" : "Active",
-                  "Name" : event.Name ,
-                  "SeasonID" : event.SeasonID,
-                  "Players" : event.Players
-              },
-          };
-
-          docClient.put(params, function(response, result) {
-            if (err) {
-              callback(new Error('DynamoDB Error'));
-            }
-            else {
-              console.log('10');  
-              callback(null, 'Team: ' + uuid);
-            }
-          });
-        }
-      });
+                TableName : 'Team',
+                Item : { 
+                    "TeamID" : uuid,
+                    "Status" : "Active",
+                    "Name" : event.Name ,
+                    "SeasonID" : event.SeasonID,
+                    "Players" : event.Players
+                },
+            };
+            docClient.put(params, function(err, result) {
+              if (err) 
+                callback(new Error('DynamoDB Error'));
+              else 
+                callback(null, 'Team: ' + uuid);
+            });
+          }
+        });
+      }
     }
 };
