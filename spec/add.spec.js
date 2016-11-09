@@ -29,7 +29,7 @@ describe('Add a New Team', function() {
 		});
 		AWSMock.mock('DynamoDB.DocumentClient', 'put', function(params, callback) {
 				callback();
-		})
+		});
 	});
 
 	beforeEach(function() {
