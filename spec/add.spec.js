@@ -16,11 +16,11 @@ describe('Add a New Team', function() {
 	var teamCorrect;
 	var teamNoSeason;
 	var teamUnknownSeason;
-	var teamNoPlayers;
+	var teamNoplayers;
 
 	before(function(){
 		AWSMock.mock('DynamoDB.DocumentClient', 'get', function(params, callback) {
-				if (params.Key.SeasonID == 1477261819718) {
+				if (params.Key.seasonID == 1477261819718) {
 					callback(null, 'Success')
 				}
 				else {
@@ -35,44 +35,91 @@ describe('Add a New Team', function() {
 	beforeEach(function() {
 		context = { };
 		teamCorrect = {
-		    "Name" : "Blue Bombers",
-		    "SeasonID" : 1477261819718,
-		    "Players" : [
+		    "name" : "Blue Bombers",
+		    "seasonID" : 1477261819718,
+		    "manager": {
+		    	"firstname": "Roger",
+		    	"lastname": "Long",
+		    	"email": "roger.long@corp.com"
+		    },
+		    "coach": {
+		    	"firstname": "Eric",
+		    	"lastname": "Mitchell",
+		    	"email": "eric.mitchell@corp.com"
+		    },
+		    "players" : [
 					{
-						"First Name" : "Lamar",
-				 		"Last Name" : "Connor",
-				 		"Cap Number" : "1",
-				 		"Position" : "Goalkeeper"
+						"firstname" : "Lamar",
+				 		"lastname" : "Connor",
+				 		"capNumber" : "1",
+				 		"position" : "Goalkeeper"
 				 	}
 				]
 			};
 		teamNoSeason = {
-		    "Name" : "Blue Bombers",
-		    "Players" : [
+		    "name" : "Blue Bombers",
+		    "manager": {
+		    	"firstname": "Roger",
+		    	"lastname": "Long",
+		    	"email": "roger.long@corp.com"
+		    },
+		    "players" : [
 					{
-						"First Name" : "Lamar",
-				 		"Last Name" : "Connor",
-				 		"Cap Number" : "1",
-				 		"Position" : "Goalkeeper"
+						"firstname" : "Lamar",
+				 		"lastname" : "Connor",
+				 		"capNumber" : "1",
+				 		"position" : "Goalkeeper"
 				 	}
 				]
 			};
 		teamUnknownSeason = {
-		    "Name" : "Blue Bombers",
-		    "SeasonID" : 1477261819720,
-		    "Players" : [
+		    "name" : "Blue Bombers",
+		    "seasonID" : 1477261819720,
+		    "manager": {
+		    	"firstname": "Roger",
+		    	"lastname": "Long",
+		    	"email": "roger.long@corp.com"
+		    },
+		    "players" : [
 					{
-						"First Name" : "Lamar",
-				 		"Last Name" : "Connor",
-				 		"Cap Number" : "1",
-				 		"Position" : "Goalkeeper"
+						"firstname" : "Lamar",
+				 		"lastname" : "Connor",
+				 		"capNumber" : "1",
+				 		"position" : "Goalkeeper"
+				 	}
+				]
+			};
+		teamNoManager = {
+		    "name" : "Blue Bombers",
+		    "seasonID" : 1477261819718,
+		    "players" : [
+					{
+						"firstname" : "Lamar",
+				 		"lastname" : "Connor",
+				 		"capNumber" : "1",
+				 		"position" : "Goalkeeper"
 				 	}
 				]
 			};
 		teamNoPlayers = {
-		    "Name" : "Blue Bombers",
-		    "SeasonID" : 1477261819718,
+		    "name" : "Blue Bombers",
+		    "seasonID" : 1477261819718,
+		    "manager": {
+		    	"firstname": "Roger",
+		    	"lastname": "Long",
+		    	"email": "roger.long@corp.com"
+		    }
 		};
+		teamZeroPlayers = {
+		    "name" : "Blue Bombers",
+		    "seasonID" : 1477261819718,
+		    "manager": {
+		    	"firstname": "Roger",
+		    	"lastname": "Long",
+		    	"email": "roger.long@corp.com"
+		    },
+		    "players" : []
+			};
 	});
 
 	afterEach(function() {
@@ -83,7 +130,6 @@ describe('Add a New Team', function() {
 		app.handler(teamCorrect, context, function (err, data) {
 			expect(err).equal(null);
 			expect(data).to.contain('Team');
-
 			done();
 		});
 	}));
@@ -91,7 +137,7 @@ describe('Add a New Team', function() {
 	it('-- Fails when no Season is found', sinon.test(function(done) {
 
 		app.handler(teamNoSeason, context, function (err, data) {
-			expect(err.message).equal('No Season');		;
+			expect(err.message).equal('No Season');
 			done();
 		});
 	}));	
@@ -99,7 +145,23 @@ describe('Add a New Team', function() {
 	it('-- Fails when no Players are found', sinon.test(function(done) { 
 
 		app.handler(teamNoPlayers, context, function (err, data) {
-			expect(err.message).equal('No Players');		;
+			expect(err.message).equal('No Players');
+			done();
+		});		
+	}));
+
+	it('-- Fails when no Manager is found', sinon.test(function(done) { 
+
+		app.handler(teamNoManager, context, function (err, data) {
+			expect(err.message).equal('No Manager');
+			done();
+		});		
+	}));
+
+	it('-- Fails when there are 0 Players', sinon.test(function(done) { 
+
+		app.handler(teamZeroPlayers, context, function (err, data) {
+			expect(err.message).equal('Need 1 Player');
 			done();
 		});		
 	}));
