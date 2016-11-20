@@ -32,7 +32,7 @@ exports.handler = function(event, context, callback) {
 
                 TableName : 'Team',
                 Item : { 
-                    "teamID" : uuid,
+                    "teamID" : uuid.toString(),
                     "seasonID" : event.seasonID,
                     "status" : "Active",
                     "name" : event.name ,
