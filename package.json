@@ -4,8 +4,8 @@
   "description": "Lamdba Function to add RWP Team to DynamoDB",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/mocha ./spec/add.spec.js",
-    "cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report html ./spec/add.spec.js"
+    "test": "./node_modules/.bin/mocha ./spec/*.spec.js",
+    "cover": "./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report html ./spec/*.spec.js"
   },
   "repository": {
     "type": "git",
