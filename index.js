@@ -45,7 +45,7 @@ exports.handler = function(event, context, callback) {
               if (err) 
                 callback(new Error('DynamoDB Error'));
               else 
-                callback(null, 'Team: ' + uuid);
+                callback(null, '{ Team: ' + uuid + '}');
             });
           }
         });
