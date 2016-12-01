@@ -34,7 +34,7 @@ exports.handler = function(event, context, callback) {
                 Item : { 
                     "teamID" : uuid.toString(),
                     "seasonID" : event.seasonID,
-                    "status" : "Active",
+                    "teamStatus" : "Active",
                     "name" : event.name ,
                     "manager": event.manager,
                     "coach": event.coach,
@@ -45,7 +45,7 @@ exports.handler = function(event, context, callback) {
               if (err) 
                 callback(new Error('DynamoDB Error'));
               else 
-                callback(null, '{ teamID: ' + uuid + ' }');
+                callback(null, '{ teamID: ' + uuid + '  }');
             });
           }
         });
