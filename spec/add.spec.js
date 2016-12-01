@@ -129,7 +129,7 @@ describe('Add a New Team', function() {
 
 		app.handler(teamCorrect, context, function (err, data) {
 			expect(err).equal(null);
-			expect(data).to.contain('Team');
+			expect(data).to.contain('teamID');
 			done();
 		});
 	}));
